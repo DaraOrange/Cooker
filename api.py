@@ -20,7 +20,7 @@ recipes = {'Борщ': time(0, 2, 40), 'Грибной суп':  time(0, 2, 27),
            'Рис с сухофруктами и курица в томатном соусе': time(0, 3, 20),
            'Яичная лапша с говядиной в соусе': time(0, 4, 56),
            'Карбонара': time(0, 5, 20), 'Бефстроганов': time(0, 3, 53),
-           'Мясная котлета с картофелем айдахо и томатным соусом': time(0, 8, 27)
+               'Мясная котлета с картофелем айдахо и томатным соусом': time(0, 8, 27)}
 current_orders = []
 
 empl_list = {'Cook1': true, 'Cook2': true, 'Cook3': true}
@@ -65,13 +65,13 @@ def handle_dialog(req, res):
         uttr = req['request']['original_utterance']
         if uttr.size() != 0 :
             for recipe in recipes:
-                if (recipe[0] == uttr)
+                if (recipe[0] == uttr):
                     order = Order(recipe, 7*60, recipe[1].hour*3600 +
-                                 recipe[1].minute*60 + recipe[1]seconds, request.args.get("time") + recipe[1])
+                                 recipe[1].minute*60 + recipe[1].seconds, request.args.get("time") + recipe[1])
                     
 
-def add_order(order, meal):
-        heappush(order.PlanLeadTime - (order.StartTime + food.PlanLeadTime), order.id)
+#def add_order(order, meal):
+#        heappush(order.PlanLeadTime - (order.StartTime + food.PlanLeadTime), order.id)
 
 
 def manage_order():
@@ -81,7 +81,7 @@ def manage_order():
         {order, food} = heappop(current_orders)
         fullorder = FullOrder(order.id, food.id, cooker.id, "in_progress", order.PlanLeadTime, 
                               order.StartTime, order.StartTime + food.PlanLeadTime);
-def add_order_with_additional_time(fullorder, current_time, additinal_time)
+def add_order_with_additional_time(fullorder, current_time, additinal_time):
     updatedOrder = FullOrder(fullorder.orderId, fullorder.foodId, fullorder.cookerId, fullorder.status,
                              fullorder.LeadTime, fullorder.StartTime, current_time + additinal_time)
 
