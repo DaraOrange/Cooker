@@ -75,8 +75,8 @@ def handle_dialog(req, res):
                 "Менеджер",
             ]
         }
-        users.append(User(user_id, 1, 1))
-        res['response']['buttons'] = get_suggests(user_id)
+        # users.append(User(user_id, 1, 1))
+        # res['response']['buttons'] = get_suggests(user_id)
         return 
 
     # Обрабатываем ответ пользователя.
@@ -124,3 +124,28 @@ def get_user(id) :
 
 def send_message(text)
     print(text)
+
+def get_suggests(user_id):
+    session = sessionStorage[user_id]
+
+    # Выбираем две первые подсказки из массива.
+    suggests = [
+        {'title': suggest, 'hide': True}
+        for suggest in session['suggests'][:2]
+    ]
+
+    # Убираем первую подсказку, чтобы подсказки менялись каждый раз.
+    session['suggests'] = session['suggests'][1:]
+    sessionStorage[user_id] = session
+
+    # Если осталась только одна подсказка, предлагаем подсказку
+    # со ссылкой на Яндекс.Маркет.
+    if len(suggests) < 2:
+        suggests.append({
+            "title": "Ладно",
+            "url": "https://market.yandex.ru/search?text=слон",
+            "hide": True
+        })
+
+    return suggests
+
