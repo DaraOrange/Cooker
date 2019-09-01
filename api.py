@@ -21,6 +21,7 @@ recipes = {'Борщ': time(0, 2, 40), 'Грибной суп':  time(0, 2, 27),
            'Яичная лапша с говядиной в соусе': time(0, 4, 56),
            'Карбонара': time(0, 5, 20), 'Бефстроганов': time(0, 3, 53),
            'Мясная котлета с картофелем айдахо и томатным соусом': time(0, 8, 27)
+current_orders = []
 
 empl_list = {'Cook1': true, 'Cook2': true, 'Cook3': true}
 
@@ -54,59 +55,33 @@ def handle_dialog(req, res):
     user_id = req['session']['user_id']
 
     if req['session']['new']:
-        # Это новый пользователь.
-        # Инициализируем сессию и поприветствуем его.
-
-        sessionStorage[user_id] = {
-            'suggests': [
-                "Не хочу.",
-                "Не буду.",
-                "Отстань!",
-            ]
-        }
-
-        res['response']['text'] = 'Привет! Купи слона!'
-        res['response']['buttons'] = get_suggests(user_id)
+        res['response']['text'] = 'Добро пожаловать! Уверена, вы найдете то, что понравится вашему желудку!'
+        #TODO: Menu for customers
+        # res['response']['buttons'] = get_suggests(user_id)
         return
 
     # Обрабатываем ответ пользователя.
-    if req['request']['original_utterance'].lower() in [
-        'ладно',
-        'куплю',
-        'покупаю',
-        'хорошо',
-    ]:
-        # Пользователь согласился, прощаемся.
-        res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
-        return
+    if req['request']['original_utterance'].size() != 0 :
+        uttr = req['request']['original_utterance']
+        if uttr.size() != 0 :
+            for recipe in recipes:
+                if (recipe[0] == uttr)
+                    order = Order(recipe, 7*60, recipe[1].hour*3600 +
+                                 recipe[1].minute*60 + recipe[1]seconds, request.args.get("time") + recipe[1])
+                    
 
-    # Если нет, то убеждаем его купить слона!
-    res['response']['text'] = 'Все говорят "%s", а ты купи слона!' % (
-        req['request']['original_utterance']
-    )
-    res['response']['buttons'] = get_suggests(user_id)
+def add_order(order, meal):
+        heappush(order.PlanLeadTime - (order.StartTime + food.PlanLeadTime), order.id)
 
-# Функция возвращает две подсказки для ответа.
-def get_suggests(user_id):
-    session = sessionStorage[user_id]
 
-    # Выбираем две первые подсказки из массива.
-    suggests = [
-        {'title': suggest, 'hide': True}
-        for suggest in session['suggests'][:2]
-    ]
+def manage_order():
+    while (current_orders.size() != 0):
+        cooker = get_free_cooker()
+        cooker.status = 0
+        {order, food} = heappop(current_orders)
+        fullorder = FullOrder(order.id, food.id, cooker.id, "in_progress", order.PlanLeadTime, 
+                              order.StartTime, order.StartTime + food.PlanLeadTime);
+def add_order_with_additional_time(fullorder, current_time, additinal_time)
+    updatedOrder = FullOrder(fullorder.orderId, fullorder.foodId, fullorder.cookerId, fullorder.status,
+                             fullorder.LeadTime, fullorder.StartTime, current_time + additinal_time)
 
-    # Убираем первую подсказку, чтобы подсказки менялись каждый раз.
-    session['suggests'] = session['suggests'][1:]
-    sessionStorage[user_id] = session
-
-    # Если осталась только одна подсказка, предлагаем подсказку
-    # со ссылкой на Яндекс.Маркет.
-    if len(suggests) < 2:
-        suggests.append({
-            "title": "Ладно",
-            "url": "https://market.yandex.ru/search?text=слон",
-            "hide": True
-        })
-
-    return suggests
