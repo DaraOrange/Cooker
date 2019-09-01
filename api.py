@@ -5,28 +5,29 @@ from __future__ import unicode_literals
 # Импортируем модули для работы с JSON и логами.
 import json
 import logging
+
+# Импортируем подмодули Flask для запуска веб-сервиса.
 from datetime import time
 from models import Order
+from user import User
 from heapq import heappush, heappop
-# Импортируем подмодули Flask для запуска веб-сервиса.
-
-
-from models import User 
-
 
 logging.basicConfig(level=logging.DEBUG)
 
 # Хранилище данных о сессиях.
 sessionStorage = {}
 
-recipes = {'Борщ': time(0, 2, 40), 'Грибной суп':  time(0, 2, 27),
-           'Рис с сухофруктами и курица в томатном соусе': time(0, 3, 20),
-           'Яичная лапша с говядиной в соусе': time(0, 4, 56),
-           'Кsарбонара': time(0, 5, 20), 'Бефстроганов': time(0, 3, 53),
-           'Мясная котлета с картофелем айдахо и томатным соусом': time(0, 8, 27)}
+# Задаем параметры приложения Flask.
+
+recipes = {'борщ': time(0, 2, 40), 'грибной суп':  time(0, 2, 27),
+           'рис с сухофруктами и курица в томатном соусе': time(0, 3, 20),
+           'яичная лапша с говядиной в соусе': time(0, 4, 56),
+           'карбонара': time(0, 5, 20), 'бефстроганов': time(0, 3, 53),
+               'мясная котлета с картофелем айдахо и томатным соусом': time(0, 8, 27)}
 current_orders = []
 order_heap = []
 orders = []
+users = []
 order_id = 0
 cook_time = time(0, 7, 0)
 
@@ -34,11 +35,7 @@ empl_list = {'Cook1': True, 'Cook2': True, 'Cook3': True}
 
 roles = {'Клиент': 0, 'Повар': 1, 'Менеджер': 2}
 
-empl_list = {'Cook1': true, 'Cook2': true, 'Cook3': true}
-
-# Задаем параметры приложения Flask.
 from flask import Flask, request
-
 app = Flask(__name__)
 @app.route("/", methods=['POST'])
 
@@ -77,13 +74,22 @@ def handle_dialog(req, res):
                 "Менеджер",
             ]
         }
-        # users.append(User(user_id, 1, 1))
+        #TODO: Menu for customers
         # res['response']['buttons'] = get_suggests(user_id)
-        return 
+        return
 
     # Обрабатываем ответ пользователя.
     tokens = req['request']['original_utterance'].split()
     user = get_user(user_id)
+    if tokens and tokens[0] in [
+            "Клиент",
+            "Повар",
+            "Менеджер",
+        ]:
+            users.append(User(user_id, roles[tokens[0]], 1))
+            res['response']['text'] = 'Очень приятно'
+            return 
+        
     if user.role == 1 :
         if tokens and tokens[0].lower() in [
             'сделал',
@@ -93,18 +99,8 @@ def handle_dialog(req, res):
             'готово'
         ]:
             res['response']['text'] = 'Молодец!'
-            for order in allOrders: 
-                if (order.cookerId == user_id and order.status == 'in_progress') :
-                    order.status = 'finished'
-                    break
-            user.status = 1
             return 
-        if req['request']['original_utterance'].isnumeric() :
-            res['response']['text'] = 'Хорошо, мы уведомим об этом менеджера. Надеюсь клиент не останется голодным('
-            return
-        send_message(req['request']['original_utterance'])
-    if user.role == 0 :
-        if tokens and tokens[0] == 'Приготовь':
+    if tokens and tokens[0].lower() == 'приготовь':
         if (len(tokens) == 1):
             res['response']['text'] = 'Хз что готовить'
             return
@@ -115,18 +111,13 @@ def handle_dialog(req, res):
             order = Order(recipe, time(0, 6-item.minute, 60-item.second))
             heappush(order_heap, order)
             res['response']['text'] = 'Заказ добавлен в очередь!'
-
-
-
+            
 def get_user(id) :
     for user in users :
         if (user.userId == id):
             return user
-    # return filter(lambda user: user.userId == id, users)
 
-def send_message(text)
-    print(text)
-
+# Функция возвращает две подсказки для ответа.
 def get_suggests(user_id):
     session = sessionStorage[user_id]
 
@@ -150,4 +141,3 @@ def get_suggests(user_id):
         })
 
     return suggests
-
