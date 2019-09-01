@@ -5,16 +5,22 @@ from __future__ import unicode_literals
 # Импортируем модули для работы с JSON и логами.
 import json
 import logging
+from datetime import time
 
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
 app = Flask(__name__)
 
-
 logging.basicConfig(level=logging.DEBUG)
 
 # Хранилище данных о сессиях.
 sessionStorage = {}
+
+recipes = {'Борщ': time(0, 2, 40), 'Грибной суп':  time(0, 2, 27),
+           'Рис с сухофруктами и курица в томатном соусе': time(0, 3, 20),
+           'Яичная лапша с говядиной в соусе': time(0, 4, 56),
+           'Карбонара': time(0, 5, 20), 'Бефстроганов': time(0, 3, 53),
+           'Мясная котлета с картофелем айдахо и томатным соусом': time(0, 8, 27)
 
 # Задаем параметры приложения Flask.
 @app.route("/", methods=['POST'])
