@@ -168,8 +168,6 @@ def handle_dialog(req, res):
      
     if check_new_order(text, res):
         return
-    if check_end_task(text, res):
-        return
         
     # if user.role == 1 :
     #   res['response']['text'] = 'аолрал'
