@@ -122,17 +122,12 @@ def check_show_orders(text, res):
 
 
 def check_end_task(text, res, cook_id):
-    if cook_id >= 1 and cook_id <= 3:
-        empl_list[cook_id] = 0
-        add_task(res, cook_id)
-        return True
-    else:
-        res['response']['text'] = 'Нет такого повара.'
-        return True
-    return False
+    empl_list[cook_id] = 0
+    add_task(res, cook_id)
+    return True
 
 
-# Функция для непосредственной обработки диалога.
+# Функция для непосредственной обsработки диалога.
 def handle_dialog(req, res):
     user_id = req['session']['user_id']
 
@@ -158,8 +153,9 @@ def handle_dialog(req, res):
     if tokens and text.lower() in roles.keys():
         # users.append(User(user_id, roles[tokens[0].lower()], 1))                    
         current_user = roles[tokens[0].lower()]
-        if check_end_task(text, res, current_user):
-            return
+        if (current_user >= 1 && current_user <= 3)
+            if check_end_task(text, res, current_user):
+                return
         res['response']['text'] = 'Поменяла пользователя'
         return 
 
