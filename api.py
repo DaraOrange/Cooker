@@ -153,7 +153,7 @@ def handle_dialog(req, res):
     if tokens and text.lower() in roles.keys():
         # users.append(User(user_id, roles[tokens[0].lower()], 1))                    
         current_user = roles[tokens[0].lower()]
-        if (current_user >= 1 && current_user <= 3)
+        if (current_user >= 1 and current_user <= 3)
             if check_end_task(text, res, current_user):
                 return
         res['response']['text'] = 'Поменяла пользователя'
