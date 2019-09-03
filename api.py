@@ -39,7 +39,7 @@ current_user = -1;
 
 empl_list = [True, True, True, True]
 
-roles = {'crm': 0, 'менеджер': 1, 'повар1': 2, 'повар2': 3, 'повар3': 4}
+roles = {'crm': 4, 'менеджер': 0, 'повар1': 1, 'повар2': 2, 'повар3': 3}
 
 from flask import Flask, request
 app = Flask(__name__)
@@ -121,20 +121,14 @@ def check_show_orders(text, res):
     return False
 
 
-def check_end_task(text, res):
-    tokens = text.split()
-    if len(tokens) != 3:
-        return False
-    if tokens[0].lower() == 'свободен':
-        if tokens[1] == 'повар' and tokens[2].isdigit():
-            cook_id = int(tokens[2])
-            if cook_id >= 1 and cook_id <= 3:
-                empl_list[cook_id] = 0
-                add_task(res, cook_id)
-                return True
-            else:
-                res['response']['text'] = 'Нет такого повара.'
-                return True
+def check_end_task(text, res, cook_id):
+    if cook_id >= 1 and cook_id <= 3:
+        empl_list[cook_id] = 0
+        add_task(res, cook_id)
+        return True
+    else:
+        res['response']['text'] = 'Нет такого повара.'
+        return True
     return False
 
 
@@ -162,21 +156,20 @@ def handle_dialog(req, res):
     
     tokens = req['request']['original_utterance'].split()
     if tokens and text.lower() in roles.keys():
-        users.append(User(user_id, roles[tokens[0].lower()], 1))        
-        res['response']['text'] = 'Поменяла пользователя'            
+        # users.append(User(user_id, roles[tokens[0].lower()], 1))                    
         current_user = roles[tokens[0].lower()]
+        if check_end_task(text, res, current_user):
+            return
+        res['response']['text'] = 'Поменяла пользователя'
         return 
 
     if check_show_orders(text, res):
-            return
-
-    user = get_user(user_id)
+        return
      
-    if user.role == 0 :
-        if check_new_order(text, res):
-            return
-        if check_end_task(text, res):
-            return
+    if check_new_order(text, res):
+        return
+    if check_end_task(text, res):
+        return
         
     # if user.role == 1 :
     #   res['response']['text'] = 'аолрал'
