@@ -11,11 +11,12 @@ def diff_in_time(time1, time2):
         return time(0, minutes, seconds)
 
 class Order:
-        def __init__(self, orderId, orderName, factTime, addTime):
+        def __init__(self, orderId, orderName, factTime, addTime, status):
                 self.orderId = orderId
                 self.orderName = orderName
                 self.factTime = factTime
                 self.addTime = addTime
+                self.status = status
                 
         def __lt__(self, other):
                 timestamp = datetime.datetime.now().time()
